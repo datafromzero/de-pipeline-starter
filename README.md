@@ -18,7 +18,10 @@ uv run pytest -q
 ```
 
 In a codespace: open the repository on GitHub, choose Code, then Codespaces, then create one. The dev container
-installs uv and runs `uv sync` for you. A stopped codespace is deleted after 30 days, so push your work.
+installs uv and runs `uv sync` for you; from lesson 16 on it also installs Java 21, which the Spark lesson needs. A codespace
+created before that has no Java: fetch the new file with
+`git show de-16-done:.devcontainer/devcontainer.json > .devcontainer/devcontainer.json`, open the Command Palette
+and choose Codespaces: Rebuild Container. A stopped codespace is deleted after 30 days, so push your work.
 
 Start the mock API in its own terminal and leave it running while you work:
 
@@ -40,7 +43,8 @@ sql/                   the physical design of the cafe tables and the layout exp
 ci/                    the script that the CI workflow runs: the dbt build from nothing
 .github/workflows/     the CI workflow for pull requests
 airflow/               Airflow in an environment of its own: the DAG, its tests and env.sh
-scripts/               small scripts the lessons run (tour, arrivals, seed check, break the data, stage a day, partner files)
+spark/                 PySpark in an environment of its own (it needs Java): the jobs of the Spark lesson
+scripts/               small scripts the lessons run (tour, arrivals, seed check, break the data, stage a day, partner files, fetch the app events)
 data/raw/              landing zone 1: bytes exactly as they arrived (Git ignores what is inside)
 data/staging/          landing zone 2: typed, cleaned tables
 data/serving/          landing zone 3: what other people query
@@ -53,7 +57,7 @@ light and works on Windows. Set it up with `cd airflow`, `uv sync`, `source env.
 Airflow does not run natively on Windows: its documentation says it runs on POSIX-compliant operating systems and that on
 Windows you can run it through WSL2 or Linux containers, so on Windows use a codespace or WSL2 for the Airflow lessons.
 dbt (dbt-core with dbt-duckdb) is in the main environment: run it from the `dbt/` folder with `uv run dbt build`.
-A later lesson adds PySpark; nothing of it is installed yet.
+PySpark is in `spark/`, with its own `pyproject.toml` and `uv.lock`: it needs Java 17, 21 or 25 on your path (the dev container of lesson 16 installs 21), and `uv sync` there builds it from a source archive. Run its jobs from that folder, with `uv run python NAME.py`.
 
 ## Checkpoints
 

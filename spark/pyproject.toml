@@ -1,0 +1,11 @@
+[project]
+name = "de-pipeline-spark"
+version = "0.1.0"
+description = "PySpark for the pipeline, in an environment of its own: it needs Java and a large download, so uv sync in the main folder stays light."
+requires-python = ">=3.11"
+dependencies = [
+    "pyspark==4.3.0",
+]
+
+[tool.uv]
+package = false

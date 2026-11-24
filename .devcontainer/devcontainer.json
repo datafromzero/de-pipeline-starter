@@ -1,6 +1,9 @@
 {
   "name": "de-pipeline-starter",
   "image": "mcr.microsoft.com/devcontainers/python:1-3.13-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": { "version": "21" }
+  },
   "postCreateCommand": "pip install uv && uv sync",
   "forwardPorts": [8000],
   "portsAttributes": {
