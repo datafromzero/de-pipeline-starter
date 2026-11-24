@@ -1,0 +1,23 @@
+{
+  "table": "order_lines",
+  "producer": "the sales API",
+  "key": "order_item_id",
+  "columns": {
+    "order_item_id": {"nullable": false},
+    "order_id": {"nullable": false},
+    "ordered_at": {"nullable": false},
+    "store_id": {"nullable": false},
+    "customer_id": {"nullable": true},
+    "status": {"nullable": false, "accepted": ["completed", "canceled"]},
+    "payment_method": {"nullable": false, "accepted": ["card", "mobile", "cash"]},
+    "product_id": {"nullable": false},
+    "quantity": {"nullable": false, "min": 1, "max": 10, "on_fail": "quarantine"},
+    "discount_usd": {"nullable": false},
+    "updated_at": {"nullable": false},
+    "channel": {"nullable": true, "accepted": ["counter", "app"]}
+  },
+  "freshness_hours": 36,
+  "lines_per_day": {"min": 5, "max": 50},
+  "max_quarantine_share": 0.25,
+  "never_silent": "a line that was read and is neither in order_lines nor in quarantine"
+}

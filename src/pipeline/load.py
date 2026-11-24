@@ -7,6 +7,7 @@ from datetime import timedelta
 import duckdb
 
 from pipeline.config import RAW_DIR, SERVING_DIR
+from pipeline.gate import gate
 from pipeline.ingest import land, window_name
 from pipeline.stage import staged_lines
 
@@ -47,7 +48,7 @@ def run(con, until=None, replay=False):
     since = None if watermark is None else (watermark - LOOKBACK).strftime("%Y-%m-%d %H:%M:%S")
     land(since, until)
     pages = RAW_DIR / "order_lines" / window_name(since, until) / "page-*.json"
-    staged_lines(con, str(pages)).create_view("incoming", replace=True)
+    gate(con, staged_lines(con, str(pages))).create_view("incoming", replace=True)
     new, newer, same = con.execute("""
         SELECT count(*) FILTER (WHERE t.order_item_id IS NULL),
                count(*) FILTER (WHERE t.order_item_id IS NOT NULL AND i.updated_at > t.updated_at),

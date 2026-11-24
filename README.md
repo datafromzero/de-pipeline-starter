@@ -32,18 +32,19 @@ uv run python mock_api.py
 mock_api.py            the outside world: a sales API on localhost (a source you do not control)
 mock_api_data/         the API's own database (orders and their lines); not yours to read
 source_files/          two files a partner drops: products.csv and stores.csv
+contracts/            what the data must be: the contract of order_lines, and the checks that come from it
 src/pipeline/          your code, one module for each stage of the pipeline
 tests/                 pytest tests
-scripts/               small scripts the lessons run (tour, arrivals, seed check)
+scripts/               small scripts the lessons run (tour, arrivals, seed check, break the data)
 data/raw/              landing zone 1: bytes exactly as they arrived (Git ignores what is inside)
 data/staging/          landing zone 2: typed, cleaned tables
 data/serving/          landing zone 3: what other people query
 check_environment.py   tells you what is missing on your computer and how to fix it
 ```
 
-Later lessons add dbt-duckdb, Airflow and PySpark; nothing of them is installed yet. Airflow does not run natively on
+Later lessons add Airflow, dbt-duckdb and PySpark; nothing of them is installed yet. Airflow does not run natively on
 Windows. Its documentation says Airflow runs on POSIX-compliant operating systems and that on Windows you can run it
-through WSL2 or Linux containers, so on Windows use a codespace or WSL2 for the Airflow lesson.
+through WSL2 or Linux containers, so on Windows use a codespace or WSL2 for the Airflow lessons.
 
 ## Checkpoints
 
