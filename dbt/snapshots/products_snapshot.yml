@@ -1,0 +1,8 @@
+snapshots:
+  - name: products_snapshot
+    relation: source('partner', 'products')
+    config:
+      schema: snapshots
+      unique_key: product_id
+      strategy: timestamp
+      updated_at: updated_at

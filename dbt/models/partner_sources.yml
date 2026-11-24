@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: partner
+    meta:
+      external_location: "{{ env_var('PARTNER_DIR', '../data/partner') }}/{name}.parquet"
+    tables:
+      - name: products

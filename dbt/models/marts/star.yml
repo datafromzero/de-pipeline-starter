@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: dim_product
+    description: One row for each version of a product, with the time span in which that version was true.
+    columns:
+      - name: product_key
+        description: Surrogate key of the version, made by the snapshot from the product and the start of the version.
+        data_tests:
+          - unique
+          - not_null
+      - name: product_id
+        description: Key of the product in the partner's file; it repeats once for each version.
+        data_tests:
+          - not_null
+      - name: valid_from
+        description: When this version became true, as the partner's file said.
+        data_tests:
+          - not_null
+      - name: valid_to
+        description: When the next version replaced this one; empty for the current version.
+
+  - name: dim_store
+    description: One row for each store, as it is now.
+    columns:
+      - name: store_key
+        description: Surrogate key of the store, a hash of its store_id.
+        data_tests:
+          - unique
+          - not_null
+
+  - name: fct_order_lines
+    description: One row for each order line, with the keys of the product version and the store that were true when it was ordered.
+    columns:
+      - name: order_line_id
+        description: Key of the line, as the sales API sends it.
+        data_tests:
+          - unique
+          - not_null
+      - name: product_key
+        description: The version of the product the line sold.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_key
+      - name: store_key
+        description: The store that took the order.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_key
