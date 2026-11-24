@@ -35,6 +35,7 @@ source_files/          two files a partner drops: products.csv and stores.csv
 contracts/            what the data must be: the contract of order_lines, and the checks that come from it
 src/pipeline/          your code, one module for each stage of the pipeline
 tests/                 pytest tests
+dbt/                   the dbt project: models, tests and the profile that reads data/staging
 airflow/               Airflow in an environment of its own: the DAG, its tests and env.sh
 scripts/               small scripts the lessons run (tour, arrivals, seed check, break the data)
 data/raw/              landing zone 1: bytes exactly as they arrived (Git ignores what is inside)
@@ -47,7 +48,8 @@ Airflow lives in `airflow/`, with its own `pyproject.toml` and `uv.lock`, so tha
 light and works on Windows. Set it up with `cd airflow`, `uv sync`, `source env.sh` and `uv run airflow db migrate`.
 Airflow does not run natively on Windows: its documentation says it runs on POSIX-compliant operating systems and that on
 Windows you can run it through WSL2 or Linux containers, so on Windows use a codespace or WSL2 for the Airflow lessons.
-Later lessons add dbt-duckdb and PySpark; nothing of them is installed yet.
+dbt (dbt-core with dbt-duckdb) is in the main environment: run it from the `dbt/` folder with `uv run dbt build`.
+A later lesson adds PySpark; nothing of it is installed yet.
 
 ## Checkpoints
 
