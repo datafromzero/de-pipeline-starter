@@ -1,0 +1,28 @@
+[project]
+name = "de-pipeline-starter"
+version = "0.1.0"
+description = "The starter repository of the datafromzero Data Engineer track: one small pipeline, built lesson by lesson."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+dependencies = [
+    "duckdb==2.0.0",
+    "requests==2.34.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.2.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.11.0,<0.12"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "pipeline"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

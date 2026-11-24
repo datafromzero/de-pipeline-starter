@@ -1,0 +1,17 @@
+product_id,product_name,category,unit_price_usd
+1,Espresso,coffee,3.00
+2,Americano,coffee,3.50
+3,Latte,coffee,4.50
+4,Cappuccino,coffee,4.50
+5,Mocha,coffee,5.00
+6,Cold Brew,coffee,4.75
+7,Green Tea,tea,3.25
+8,Chai Latte,tea,4.75
+9,Iced Lemon Tea,tea,3.75
+10,Croissant,bakery,3.25
+11,Blueberry Muffin,bakery,3.50
+12,Banana Bread,bakery,3.75
+13,Bagel with Cream Cheese,food,4.25
+14,Avocado Toast,food,8.50
+15,Turkey Sandwich,food,9.25
+16,Pumpkin Spice Latte,coffee,5.50

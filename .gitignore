@@ -1,0 +1,10 @@
+# Landing zones: everything the pipeline writes (the folders stay, through .gitkeep)
+data/*/*
+!data/*/.gitkeep
+# Python and tools
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+# Secrets stay out of Git (a later lesson adds a .env.example)
+.env
