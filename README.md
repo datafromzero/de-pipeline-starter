@@ -35,12 +35,16 @@ source_files/          two files a partner drops: products.csv and stores.csv
 contracts/            what the data must be: the contract of order_lines, and the checks that come from it
 src/pipeline/          your code, one module for each stage of the pipeline
 tests/                 pytest tests
-dbt/                   the dbt project: models, tests and the profile that reads data/staging
+dbt/                   the dbt project: models, snapshots, macros, tests and the profiles (dev, scratch, ci, ci_defer)
+sql/                   the physical design of the cafe tables and the layout experiment of DE12
+ci/                    the script that the CI workflow runs: the dbt build from nothing
+.github/workflows/     the CI workflow for pull requests
 airflow/               Airflow in an environment of its own: the DAG, its tests and env.sh
-scripts/               small scripts the lessons run (tour, arrivals, seed check, break the data)
+scripts/               small scripts the lessons run (tour, arrivals, seed check, break the data, stage a day, partner files)
 data/raw/              landing zone 1: bytes exactly as they arrived (Git ignores what is inside)
 data/staging/          landing zone 2: typed, cleaned tables
 data/serving/          landing zone 3: what other people query
+data/ci/               where the CI script builds, from nothing (Git ignores what is inside)
 check_environment.py   tells you what is missing on your computer and how to fix it
 ```
 

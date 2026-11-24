@@ -9,3 +9,14 @@ cafe:
       type: duckdb
       path: ../data/serving/analytics_scratch.duckdb
       threads: 1
+    ci:
+      type: duckdb
+      path: "{{ env_var('CI_DB', '../data/serving/ci.duckdb') }}"
+      threads: 1
+    ci_defer:
+      type: duckdb
+      path: ../data/serving/ci_defer.duckdb
+      threads: 1
+      attach:
+        - path: ../data/serving/analytics.duckdb
+          read_only: true
