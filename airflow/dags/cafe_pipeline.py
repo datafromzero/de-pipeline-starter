@@ -15,6 +15,7 @@ def alert(context):
     schedule=CronDataIntervalTimetable("0 0 * * *", timezone="UTC"),
     start_date=datetime(2026, 4, 30),
     catchup=False,
+    max_active_runs=1,  # the table is a DuckDB file, and one process at a time may write to it
     default_args={"retries": 2, "retry_delay": timedelta(seconds=5), "on_failure_callback": alert},
 )
 def cafe_pipeline():

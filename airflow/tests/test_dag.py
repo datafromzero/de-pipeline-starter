@@ -18,6 +18,10 @@ def test_the_dag_loads_and_the_steps_run_in_order():
     assert dag.task_dict["publish"].downstream_task_ids == set()
 
 
+def test_only_one_run_at_a_time_writes_the_table():
+    assert load_dag().max_active_runs == 1
+
+
 def test_every_task_retries_twice_and_raises_the_alert_when_it_gives_up():
     dag = load_dag()
     for task in dag.tasks:
