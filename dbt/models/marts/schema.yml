@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: fct_store_daily_sales
+    description: >
+      Sales of completed order lines, for each store and each day on which it sold something.
+      A day without a sale has no row.
+    columns:
+      - name: store_id
+        description: The store, as in stg_stores.
+        data_tests:
+          - not_null
+      - name: order_date
+        description: The day of the orders, in the cafe's local time.
+        data_tests:
+          - not_null
+      - name: lines
+        description: Completed order lines sold that day.
+      - name: units
+        description: Units on those lines.
+      - name: sales_usd
+        description: "Amount of those lines in US dollars: units times the product's price, minus the line's discount."

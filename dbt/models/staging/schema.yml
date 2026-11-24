@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: stg_order_lines
+    description: One row for each order line, the latest version of it that the pipeline staged.
+    columns:
+      - name: order_line_id
+        description: Key of the line, as the sales API sends it.
+        data_tests:
+          - unique
+          - not_null
+      - name: status
+        description: "completed or canceled: whether the order was paid."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [completed, canceled]
+      - name: product_id
+        description: The product sold on the line.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_products')
+                field: product_id
+      - name: store_id
+        description: The store that took the order.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_stores')
+                field: store_id
+
+  - name: stg_stores
+    description: One row for each store.
+    columns:
+      - name: store_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_products
+    description: One row for each product on the menu.
+    columns:
+      - name: product_id
+        data_tests:
+          - unique
+          - not_null
+      - name: category
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [coffee, tea, bakery, food]
