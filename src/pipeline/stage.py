@@ -1,10 +1,14 @@
 """Turn the raw pages into typed, de-duplicated tables in the staging layer."""
 
+import logging
+
 import duckdb
 
+from pipeline import transform
 from pipeline.config import RAW_DIR, SOURCE_FILES, STAGING_DIR
 from pipeline.ingest import window_name
 
+log = logging.getLogger("pipeline.stage")
 LINE_FIELDS = """STRUCT(
     order_item_id BIGINT, order_id BIGINT, ordered_at TIMESTAMP, store_id BIGINT, customer_id BIGINT,
     status VARCHAR, payment_method VARCHAR, product_id BIGINT, quantity BIGINT, discount_usd DECIMAL(8, 2),
@@ -12,18 +16,23 @@ LINE_FIELDS = """STRUCT(
 )"""
 
 
-def staged_lines(con, pages_glob):
-    """One row for each order line: typed columns, and the latest version when a key repeats."""
+def raw_lines(con, pages_glob):
+    """Every record of every landed page, with typed columns. A repeated record stays repeated."""
     return con.sql(f"""
         WITH pages AS (
             SELECT unnest(data) AS line
             FROM read_json('{pages_glob}', columns = {{data: '{LINE_FIELDS}[]'}})
-        ),
-        lines AS (SELECT line.* FROM pages)
-        SELECT * FROM lines
-        QUALIFY row_number() OVER (PARTITION BY order_item_id ORDER BY updated_at DESC) = 1
-        ORDER BY order_item_id
+        )
+        SELECT line.* FROM pages
     """)
+
+
+def staged_lines(con, pages_glob):
+    """One row for each order line, and a log line that says how many records became how many lines."""
+    records = raw_lines(con, pages_glob)
+    lines = transform.dedupe_latest(records)
+    log.info("%d records read, %d lines kept", records.count("*").fetchall()[0][0], lines.count("*").fetchall()[0][0])
+    return lines.order("order_item_id")
 
 
 def write_staging(con, pages_glob=None, out_dir=STAGING_DIR):
@@ -41,4 +50,5 @@ def write_staging(con, pages_glob=None, out_dir=STAGING_DIR):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     write_staging(duckdb.connect())

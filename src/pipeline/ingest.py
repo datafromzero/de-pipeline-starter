@@ -6,6 +6,7 @@ import logging
 import os
 import time
 from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 
 import requests
 
@@ -14,12 +15,16 @@ from pipeline.config import API_URL, RAW_DIR
 log = logging.getLogger("pipeline.ingest")
 
 
-def wait_time(response, attempt, base=0.5):
+def wait_time(response, attempt, base=0.5, now=None):
     """How long to wait before trying again: what the server asked for, else a doubling wait."""
+    value = response.headers.get("Retry-After", "")
+    if value.isdigit():
+        return float(value)  # a number of seconds
     try:
-        return float(response.headers["Retry-After"])
-    except (KeyError, ValueError):
+        when = parsedate_to_datetime(value)  # or a date
+    except (TypeError, ValueError):
         return base * 2 ** (attempt - 1)
+    return max(0.0, (when - (now or datetime.now(timezone.utc))).total_seconds())
 
 
 def fetch_page(params, attempts=5, sleep=time.sleep):
