@@ -5,6 +5,8 @@ models:
     description: >
       Sales of completed order lines, for each store and each day on which it sold something.
       A day without a sale has no row.
+      Cost line: a table, rebuilt in full on every run. It reads every line of int_order_lines_priced
+      and writes one row for each store and day.
     columns:
       - name: store_id
         description: The store, as in stg_stores.
@@ -20,3 +22,21 @@ models:
         description: Units on those lines.
       - name: sales_usd
         description: "Amount of those lines in US dollars: units times the product's price, minus the line's discount."
+
+  - name: fct_store_status_amounts
+    description: Net amount of the order lines of each store, one column for each status in the list of the model.
+    columns:
+      - name: store_id
+        description: The store, as in stg_stores.
+        data_tests:
+          - unique
+          - not_null
+
+  - name: fct_store_discounts
+    description: The list amount, the discounts and the net amount of the completed lines of each store.
+    columns:
+      - name: store_id
+        description: The store, as in stg_stores.
+        data_tests:
+          - unique
+          - not_null

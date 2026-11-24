@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: int_order_lines_priced
+    description: >
+      One row for each order line, priced with the product's price and net of the line's discount.
+      Cost line: an incremental merge on order_line_id. Each run reads the lines posted since the newest one the table
+      holds and writes only those; a change to what a row means needs dbt build --full-refresh.
+    columns:
+      - name: order_line_id
+        description: Key of the line, as the sales API sends it.
+        data_tests:
+          - unique
+          - not_null
+      - name: updated_at
+        description: When the till posted this version of the line; the incremental filter reads it.
+        data_tests:
+          - not_null
