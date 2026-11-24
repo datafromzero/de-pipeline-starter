@@ -42,13 +42,9 @@ def fingerprint(con):
     """).fetchall()[0]
 
 
-def run(con, until=None, replay=False):
-    saved = con.execute("SELECT watermark FROM load_state WHERE source = 'order_lines'").fetchall()
-    watermark = None if replay or not saved else saved[0][0]
-    since = None if watermark is None else (watermark - LOOKBACK).strftime("%Y-%m-%d %H:%M:%S")
-    land(since, until)
-    pages = RAW_DIR / "order_lines" / window_name(since, until) / "page-*.json"
-    gate(con, staged_lines(con, str(pages))).create_view("incoming", replace=True)
+def merge(con, incoming, save_watermark=True):
+    """Insert the new lines and update the changed ones in one transaction. Return how many were inserted, updated and unchanged."""
+    incoming.create_view("incoming", replace=True)
     new, newer, same = con.execute("""
         SELECT count(*) FILTER (WHERE t.order_item_id IS NULL),
                count(*) FILTER (WHERE t.order_item_id IS NOT NULL AND i.updated_at > t.updated_at),
@@ -62,11 +58,22 @@ def run(con, until=None, replay=False):
         ON CONFLICT (order_item_id) DO UPDATE SET {assignments}
         WHERE excluded.updated_at > order_lines.updated_at
     """)
-    con.execute("""
-        INSERT INTO load_state SELECT 'order_lines', max(updated_at) FROM order_lines
-        ON CONFLICT (source) DO UPDATE SET watermark = excluded.watermark
-    """)
+    if save_watermark:
+        con.execute("""
+            INSERT INTO load_state SELECT 'order_lines', max(updated_at) FROM order_lines
+            ON CONFLICT (source) DO UPDATE SET watermark = excluded.watermark
+        """)
     con.execute("COMMIT")
+    return new, newer, same
+
+
+def run(con, until=None, replay=False):
+    saved = con.execute("SELECT watermark FROM load_state WHERE source = 'order_lines'").fetchall()
+    watermark = None if replay or not saved else saved[0][0]
+    since = None if watermark is None else (watermark - LOOKBACK).strftime("%Y-%m-%d %H:%M:%S")
+    land(since, until)
+    pages = RAW_DIR / "order_lines" / window_name(since, until) / "page-*.json"
+    new, newer, same = merge(con, gate(con, staged_lines(con, str(pages))))
     log.info("window since=%s: %d inserted, %d updated, %d unchanged", since, new, newer, same)
     rows, quantity, check = fingerprint(con)
     log.info("order_lines now: %d rows, quantity %d, fingerprint %s", rows, quantity, check)

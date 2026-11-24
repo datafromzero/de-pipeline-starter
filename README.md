@@ -35,6 +35,7 @@ source_files/          two files a partner drops: products.csv and stores.csv
 contracts/            what the data must be: the contract of order_lines, and the checks that come from it
 src/pipeline/          your code, one module for each stage of the pipeline
 tests/                 pytest tests
+airflow/               Airflow in an environment of its own: the DAG, its tests and env.sh
 scripts/               small scripts the lessons run (tour, arrivals, seed check, break the data)
 data/raw/              landing zone 1: bytes exactly as they arrived (Git ignores what is inside)
 data/staging/          landing zone 2: typed, cleaned tables
@@ -42,9 +43,11 @@ data/serving/          landing zone 3: what other people query
 check_environment.py   tells you what is missing on your computer and how to fix it
 ```
 
-Later lessons add Airflow, dbt-duckdb and PySpark; nothing of them is installed yet. Airflow does not run natively on
-Windows. Its documentation says Airflow runs on POSIX-compliant operating systems and that on Windows you can run it
-through WSL2 or Linux containers, so on Windows use a codespace or WSL2 for the Airflow lessons.
+Airflow lives in `airflow/`, with its own `pyproject.toml` and `uv.lock`, so that `uv sync` in the main folder stays
+light and works on Windows. Set it up with `cd airflow`, `uv sync`, `source env.sh` and `uv run airflow db migrate`.
+Airflow does not run natively on Windows: its documentation says it runs on POSIX-compliant operating systems and that on
+Windows you can run it through WSL2 or Linux containers, so on Windows use a codespace or WSL2 for the Airflow lessons.
+Later lessons add dbt-duckdb and PySpark; nothing of them is installed yet.
 
 ## Checkpoints
 
