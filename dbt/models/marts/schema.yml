@@ -6,7 +6,9 @@ models:
       Sales of completed order lines, for each store and each day on which it sold something.
       A day without a sale has no row.
       Cost line: a table, rebuilt in full on every run. It reads every line of int_order_lines_priced
-      and writes one row for each store and day.
+      and writes one row for each store and day. On a warehouse it reads 5 of the 10 columns of that table,
+      167,636 bytes for 3,287 lines (BigQuery logical bytes), and is billed at least 10 MB for each of the
+      two tables it references, 20 MB in all. Cheaper once history is large: partition by order_date and rebuild only the days a run changes.
     columns:
       - name: store_id
         description: The store, as in stg_stores.
